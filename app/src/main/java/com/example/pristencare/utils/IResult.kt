@@ -1,4 +1,4 @@
-package com.example.pristencare
+package com.example.pristencare.utils
 
 sealed class IResult<out T : Any> {
 

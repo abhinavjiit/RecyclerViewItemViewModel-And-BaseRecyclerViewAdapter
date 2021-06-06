@@ -1,4 +1,4 @@
-package com.example.pristencare
+package com.example.pristencare.model
 
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName

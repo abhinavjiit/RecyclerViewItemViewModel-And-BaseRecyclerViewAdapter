@@ -1,8 +1,11 @@
-package com.example.pristencare
+package com.example.pristencare.utils
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.example.pristencare.R
+import com.example.pristencare.activity.NextActivity
+import com.example.pristencare.model.Photo
 
 @BindingAdapter("app:loadUrl")
 fun ImageView.loadUrl(photo: Photo) {

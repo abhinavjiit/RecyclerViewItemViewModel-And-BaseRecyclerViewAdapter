@@ -1,5 +1,6 @@
 package com.example.pristencare
 
+import com.example.pristencare.apiservice.ApiService
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit

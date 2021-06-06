@@ -1,10 +1,12 @@
-package com.example.pristencare
+package com.example.pristencare.utils
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pristencare.IRecyclerItemViewModel
+import com.example.pristencare.model.ViewHolderPositionModel
 
 abstract class IBaseRecyclerViewAdapter<Item : IRecyclerItemViewModel?>(var items: MutableList<Item>) : RecyclerView.Adapter<IBaseRecyclerViewAdapter.BaseBindingViewHolder>() {
 
@@ -13,7 +15,10 @@ abstract class IBaseRecyclerViewAdapter<Item : IRecyclerItemViewModel?>(var item
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseBindingViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = DataBindingUtil.inflate(layoutInflater, viewType, parent, false) as ViewDataBinding
-        val viewHolder = BaseBindingViewHolder(binding)
+        val viewHolder =
+            BaseBindingViewHolder(
+                binding
+            )
         registerItemClick(viewHolder, viewType, viewHolder.adapterPosition)
         return viewHolder
     }

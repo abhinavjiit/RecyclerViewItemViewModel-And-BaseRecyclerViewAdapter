@@ -1,7 +1,7 @@
-package com.example.pristencare
+package com.example.pristencare.adapter
 
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import com.example.pristencare.utils.FeedItem
+import com.example.pristencare.utils.IBaseRecyclerViewAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi

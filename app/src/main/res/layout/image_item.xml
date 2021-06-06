@@ -6,11 +6,11 @@
 
         <variable
             name="item"
-            type="com.example.pristencare.Photo" />
+            type="com.example.pristencare.model.Photo" />
 
         <variable
             name="position"
-            type="com.example.pristencare.ViewHolderPositionModel" />
+            type="com.example.pristencare.model.ViewHolderPositionModel" />
 
     </data>
 

@@ -1,4 +1,4 @@
-package com.example.pristencare
+package com.example.pristencare.utils
 
 import android.content.Context
 import android.content.Intent

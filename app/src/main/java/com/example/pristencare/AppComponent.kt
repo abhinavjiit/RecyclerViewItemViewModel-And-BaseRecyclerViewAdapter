@@ -1,5 +1,6 @@
 package com.example.pristencare
 
+import com.example.pristencare.activity.MainActivity
 import dagger.Component
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Singleton

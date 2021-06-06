@@ -1,4 +1,4 @@
-package com.example.pristencare
+package com.example.pristencare.activity
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -6,7 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pristencare.*
+import com.example.pristencare.adapter.ImageRecyclerViewAdapter
+import com.example.pristencare.apiservice.ApiService
 import com.example.pristencare.databinding.ActivityMainBinding
+import com.example.pristencare.domain.RepositoryImpl
+import com.example.pristencare.model.RequestModel
+import com.example.pristencare.utils.IResult
+import com.example.pristencare.utils.ImageItem
+import com.example.pristencare.viewmodel.MainActivityViewMOdelFactory
+import com.example.pristencare.viewmodel.MainActivityViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
@@ -26,7 +35,11 @@ class MainActivity : AppCompatActivity() {
     private var manager = GridLayoutManager(this, 1)
 
     private val viewModel: MainActivityViewModel by viewModels {
-        MainActivityViewMOdelFactory(RepositoryImpl(retrofit))
+        MainActivityViewMOdelFactory(
+            RepositoryImpl(
+                retrofit
+            )
+        )
     }
 
     private var requestModel = RequestModel()
@@ -56,7 +69,11 @@ class MainActivity : AppCompatActivity() {
                 is IResult.Error -> { }
                 is IResult.Success -> {
                     it.data?.photos?.photo?.forEach { photo ->
-                        imageAdapter.addItem(ImageItem(photo))
+                        imageAdapter.addItem(
+                            ImageItem(
+                                photo
+                            )
+                        )
                     }
                 }
                 else -> { }

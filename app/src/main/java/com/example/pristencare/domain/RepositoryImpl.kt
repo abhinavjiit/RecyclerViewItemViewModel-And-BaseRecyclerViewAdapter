@@ -1,11 +1,16 @@
-package com.example.pristencare
+package com.example.pristencare.domain
 
+import com.example.pristencare.model.RequestModel
+import com.example.pristencare.model.ResponseModel
+import com.example.pristencare.apiservice.ApiService
+import com.example.pristencare.utils.IResult
+import com.example.pristencare.utils.performNetworkCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class RepositoryImpl (private val apiService: ApiService) : Repository {
+class RepositoryImpl (private val apiService: ApiService) :
+    Repository {
     override suspend fun getImages(requestModel: RequestModel): Flow<IResult<ResponseModel>> {
         return performNetworkCall {
             apiService.getImages(

@@ -1,10 +1,11 @@
-package com.example.pristencare
+package com.example.pristencare.activity
 
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pristencare.databinding.ActivityNextBinding
+import com.example.pristencare.utils.loadUrl
 import kotlin.math.max
 import kotlin.math.min
 

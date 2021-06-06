@@ -1,5 +1,6 @@
-package com.example.pristencare
+package com.example.pristencare.apiservice
 
+import com.example.pristencare.model.ResponseModel
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

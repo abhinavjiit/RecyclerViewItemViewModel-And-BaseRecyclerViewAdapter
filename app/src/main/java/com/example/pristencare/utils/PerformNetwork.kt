@@ -1,4 +1,4 @@
-package com.example.pristencare
+package com.example.pristencare.utils
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

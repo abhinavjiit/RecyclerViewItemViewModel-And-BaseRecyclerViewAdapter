@@ -1,10 +1,14 @@
-package com.example.pristencare
+package com.example.pristencare.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.pristencare.utils.IResult
+import com.example.pristencare.domain.Repository
+import com.example.pristencare.model.RequestModel
+import com.example.pristencare.model.ResponseModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
