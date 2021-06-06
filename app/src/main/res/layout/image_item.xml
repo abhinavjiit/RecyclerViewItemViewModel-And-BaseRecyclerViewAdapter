@@ -2,7 +2,17 @@
 
 <layout>
 
+    <data>
 
+        <variable
+            name="item"
+            type="com.example.pristencare.Photo" />
+
+        <variable
+            name="position"
+            type="com.example.pristencare.ViewHolderPositionModel" />
+
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,10 +23,13 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            app:srcCompat="@drawable/ic_launcher_background"
+            android:layout_margin="10dp"
+            android:adjustViewBounds="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:loadUrl="@{item}"
+            app:srcCompat="@drawable/ic_launcher_background" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

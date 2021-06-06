@@ -9,11 +9,10 @@ sealed class FeedItem(private val layoutId: Int) : IRecyclerItemViewModel {
 
 }
 
-
 @ExperimentalCoroutinesApi
-class ImageItem() : FeedItem(R.layout.image_item) {
+class ImageItem(private val photo: Photo) : FeedItem(R.layout.image_item) {
     override fun getBindingPairs(): List<Pair<Int, Any>> {
-        return emptyList()
+        return listOf(BR.item to photo)
     }
 
 }

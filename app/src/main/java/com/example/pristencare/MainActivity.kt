@@ -1,10 +1,14 @@
 package com.example.pristencare
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.pristencare.databinding.ActivityMainBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import javax.inject.Inject
 
 const val LIST = 0
 const val GRID_2 = 1
@@ -15,126 +19,112 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val imageAdapter = ImageRecyclerViewAdapter()
+    private val imageAdapter by lazy { ImageRecyclerViewAdapter() }
 
     private lateinit var endlessScrollListener: EndlessScrollListener
 
-    private var manager = LinearLayoutManager(this)
+    private var manager = GridLayoutManager(this, 1)
 
-    private lateinit var viewModel: MainActivityViewModel
+    private val viewModel: MainActivityViewModel by viewModels {
+        MainActivityViewMOdelFactory(RepositoryImpl(retrofit))
+    }
 
     private var requestModel = RequestModel()
 
-    private val mainActivityViewModelFactory by lazy {
-        MainActivityViewMOdelFactory(
-            RepositoryImpl(
-                Retrofit.getRetrofit().create(ApiService::class.java)
-            )
-        )
-    }
+    @Inject
+    lateinit var retrofit: ApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (BaseApplication.getInstance() as Injector).createAppComponent().inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        binding.rlvImages.adapter = imageAdapter
+        setContentView(binding.root)
 
-        repeat(10) {
-            imageAdapter.addItem(ImageItem())
-        }
-
-
-//        setupViewModel()
-//        setupObserver()
-
-
-//        viewModel.getImages(requestModel)
-//        setupClickListener()
+        setupObserver()
+        setupLayoutManager()
+        doApiCall()
+        setupClickListener()
 
     }
 
-//    private fun setupViewModel() {
-//        viewModel =
-//            ViewModelProvider(this, mainActivityViewModelFactory)[MainActivityViewModel::class.java]
-//    }
 
-//    private fun setupObserver() {
-//
-//
-//        viewModel.images.observe(this, Observer {
-//            when (it) {
-//
-//                is IResult.Error -> {
-//                }
-//                is IResult.Success -> {
-//                    it.data?.photos?.photo?.forEach { photo ->
-//                        imageAdapter.addItem(ImageItem())
-//                    }
-//                }
-//                else -> {
-//                }
-//
-//            }
-//        })
-//
-//
-////        viewModel.layoutManager.observe(this, Observer {
-////            manager = it.second
-////            setupLayoutManager()
-////        })
-//
-//    }
+    private fun setupObserver() {
 
+        viewModel.images.observe(this, Observer {
+            when (it) {
 
-//    private fun setupScrollListener(managerType: Int) {
-////        when (managerType) {
-////            1 -> {
-////                viewModel.changeLayoutManager(GRID_2 to GridLayoutManager(this, 2))
-////            }
-////            2 -> {
-////                viewModel.changeLayoutManager(GRID_3 to GridLayoutManager(this, 3))
-////            }
-////            else -> {
-////                viewModel.changeLayoutManager(LIST to GridLayoutManager(this, 1))
-////            }
-////        }
-//    }
+                is IResult.Error -> { }
+                is IResult.Success -> {
+                    it.data?.photos?.photo?.forEach { photo ->
+                        imageAdapter.addItem(ImageItem(photo))
+                    }
+                }
+                else -> { }
+            }
+        })
 
-//    private fun setupLayoutManager() {
-////        endlessScrollListener = object : EndlessScrollListener(manager) {
-////            override fun onLoadMore(
-////                page: Int,
-////                totalItemsCount: Int,
-////                recyclerView: RecyclerView
-////            ): Boolean {
-////                if (page == 0) {
-////                    requestModel.also { it.page = 1 }
-////                } else {
-////                    requestModel.also { it.page += 1 }
-////                }
-////                doApiCall()
-////                return false
-////            }
-////
-////        }
-////        binding.rlvImages.addOnScrollListener(endlessScrollListener)
-//    }
+        viewModel.layoutManager.observe(this, Observer {
+            manager = it.second
+            setupLayoutManager()
+        })
+
+    }
+
+    private fun setupScrollListener(managerType: Int) {
+        when (managerType) {
+            GRID_2 -> {
+                viewModel.changeLayoutManager(GRID_2 to GridLayoutManager(this, 2))
+            }
+            GRID_3 -> {
+                viewModel.changeLayoutManager(GRID_3 to GridLayoutManager(this, 3))
+            }
+            else -> {
+                viewModel.changeLayoutManager(LIST to GridLayoutManager(this, 1))
+            }
+        }
+    }
+
+    private fun setupLayoutManager() {
+        binding.rlvImages.apply {
+            layoutManager = manager
+            adapter = imageAdapter
+        }
+        endlessScrollListener = object : EndlessScrollListener(manager) {
+            override fun onLoadMore(
+                page: Int,
+                totalItemsCount: Int,
+                recyclerView: RecyclerView
+            ): Boolean {
+                if (page == 0) {
+                    requestModel.also { it.page = 1 }
+                } else {
+                    requestModel.also { it.page += 1 }
+                }
+                doApiCall()
+                return false
+            }
+
+        }
+        binding.rlvImages.addOnScrollListener(endlessScrollListener)
+    }
 
 
-//    private fun setupClickListener() {
-//        binding.grid2.setOnClickListener {
-//            setupScrollListener(GRID_2)
-//        }
-//        binding.grid3.setOnClickListener {
-//            setupScrollListener(GRID_3)
-//
-//        }
-//        binding.list.setOnClickListener {
-//            setupScrollListener(LIST)
-//        }
-//
-//
-//    }
+    private fun setupClickListener() {
+        binding.grid2.setOnClickListener {
+            setupScrollListener(GRID_2)
+        }
+        binding.grid3.setOnClickListener {
+            setupScrollListener(GRID_3)
 
+        }
+        binding.list.setOnClickListener {
+            setupScrollListener(LIST)
+        }
+    }
+
+
+    private fun doApiCall() {
+        viewModel.getImages(requestModel)
+    }
 
 }

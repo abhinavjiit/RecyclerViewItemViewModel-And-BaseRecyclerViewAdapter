@@ -1,14 +1,34 @@
 package com.example.pristencare
 
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import android.app.Application
 
-object Retrofit {
+class BaseApplication : Application(), Injector {
+
+    private lateinit var applicationComponent: AppComponent
+
+    companion object {
+        @JvmField
+        var appContext: BaseApplication? = null
+
+        fun setInstance(application: BaseApplication) {
+            appContext = application
+        }
+
+        @JvmStatic
+        fun getInstance(): BaseApplication {
+            return appContext as BaseApplication
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        setInstance(this)
+        applicationComponent = DaggerAppComponent.create()
+    }
 
 
-    fun getRetrofit(): Retrofit =
-        Retrofit.Builder().baseUrl("https://api.flickr.com")
-            .addConverterFactory(GsonConverterFactory.create()).build()
-
+    override fun createAppComponent(): AppComponent {
+        return applicationComponent
+    }
 
 }
