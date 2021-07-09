@@ -32,16 +32,13 @@ class NextActivity : AppCompatActivity() {
                 override fun onScaleEnd(detector: ScaleGestureDetector?) {}
 
                 override fun onScale(detector: ScaleGestureDetector?): Boolean {
-
                     mScaleFactor *= scaleGestureDetector.scaleFactor
                     mScaleFactor = max(0.1f, min(mScaleFactor, 10.0f))
                     binding.image.scaleX = mScaleFactor
                     binding.image.scaleY = mScaleFactor
                     return true
                 }
-
             })
-
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

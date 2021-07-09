@@ -63,6 +63,8 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.29.1'
     kapt 'com.google.dagger:dagger-compiler:2.29.1'
     implementation 'androidx.activity:activity-ktx:1.2.3'
+    implementation 'com.facebook.shimmer:shimmer:0.4.0'
+
 
 
 

@@ -3,17 +3,21 @@ package com.example.pristencare.activity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pristencare.*
-import com.example.pristencare.adapter.ImageRecyclerViewAdapter
+import com.example.pristencare.BaseApplication
+import com.example.pristencare.EndlessScrollListener
+import com.example.pristencare.Injector
+import com.example.pristencare.ItemViewModel
+import com.example.pristencare.adapter.RecyclerViewImageAdapter
 import com.example.pristencare.apiservice.ApiService
 import com.example.pristencare.databinding.ActivityMainBinding
 import com.example.pristencare.domain.RepositoryImpl
+import com.example.pristencare.model.Photo
 import com.example.pristencare.model.RequestModel
 import com.example.pristencare.utils.IResult
-import com.example.pristencare.utils.ImageItem
 import com.example.pristencare.viewmodel.MainActivityViewMOdelFactory
 import com.example.pristencare.viewmodel.MainActivityViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,11 +28,10 @@ const val GRID_2 = 1
 const val GRID_3 = 2
 
 @ExperimentalCoroutinesApi
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LifecycleObserver {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val imageAdapter by lazy { ImageRecyclerViewAdapter() }
 
     private lateinit var endlessScrollListener: EndlessScrollListener
 
@@ -41,8 +44,11 @@ class MainActivity : AppCompatActivity() {
             )
         )
     }
-
     private var requestModel = RequestModel()
+
+    private val itemList = arrayListOf<Photo>()
+
+    private val Imageadapter by lazy { RecyclerViewImageAdapter(this) }
 
     @Inject
     lateinit var retrofit: ApiService
@@ -52,7 +58,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setupObserver()
         setupLayoutManager()
         doApiCall()
@@ -60,23 +65,37 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
     private fun setupObserver() {
 
         viewModel.images.observe(this, Observer {
             when (it) {
 
-                is IResult.Error -> { }
+                is IResult.Error -> {
+                }
                 is IResult.Success -> {
-                    it.data?.photos?.photo?.forEach { photo ->
-                        imageAdapter.addItem(
-                            ImageItem(
-                                photo
-                            )
-                        )
+                    try {
+                        it.data?.photos?.let {
+                            val start = it.page.minus(1) * 10
+                            val end = start + 9
+                            val list = arrayListOf<Photo>()
+                            val itemViewModelList = arrayListOf<ItemViewModel>()
+                            it.photo.forEach {
+                                list.add(it)
+                                itemViewModelList.add(ItemViewModel())
+                            }
+                            Imageadapter.setListData(list, itemViewModelList)
+
+
+                        }
+                    } catch (e: Exception) {
                     }
                 }
-                else -> { }
+                else -> {
+//                    repeat(10)
+//                    {
+//                        imageAdapter.addItem(DefaultItem())
+//                    }
+                }
             }
         })
 
@@ -104,7 +123,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupLayoutManager() {
         binding.rlvImages.apply {
             layoutManager = manager
-            adapter = imageAdapter
+            adapter = Imageadapter
         }
         endlessScrollListener = object : EndlessScrollListener(manager) {
             override fun onLoadMore(
@@ -139,9 +158,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
 
     private fun doApiCall() {
         viewModel.getImages(requestModel)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
 }

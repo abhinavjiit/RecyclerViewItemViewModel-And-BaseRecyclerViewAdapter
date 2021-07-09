@@ -11,7 +11,9 @@ data class ResponseModel(
 
 data class Photos(
     @SerializedName("photo")
-    val photo: List<Photo>
+    val photo: List<Photo>,
+    @SerializedName("page")
+    val page: Int = 1
 )
 
 @Keep

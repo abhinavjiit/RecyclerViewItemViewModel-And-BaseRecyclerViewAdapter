@@ -2,8 +2,8 @@ package com.example.pristencare.utils
 
 import com.example.pristencare.BR
 import com.example.pristencare.IRecyclerItemViewModel
-import com.example.pristencare.model.Photo
 import com.example.pristencare.R
+import com.example.pristencare.model.Photo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
@@ -20,6 +20,14 @@ class ImageItem(private val photo: Photo) : FeedItem(
 ) {
     override fun getBindingPairs(): List<Pair<Int, Any>> {
         return listOf(BR.item to photo)
+    }
+
+}
+
+@ExperimentalCoroutinesApi
+class DefaultItem() : FeedItem(R.layout.default_item_shimmer_layout) {
+    override fun getBindingPairs(): List<Pair<Int, Any>> {
+        return emptyList()
     }
 
 }
