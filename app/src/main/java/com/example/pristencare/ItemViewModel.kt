@@ -4,55 +4,56 @@ import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class ItemViewModel : LifecycleOwner, LifecycleObserver {
-    lateinit var lifecycleRegistry: LifecycleRegistry
+class ItemViewModel : LifecycleObserver {
+    lateinit var lifecycleRegistry: Lifecycle
+    var position: Int = -1
     private var _timerValue = MutableLiveData<String>("0")
     val timerValue: LiveData<String>
         get() = _timerValue
-    var value = 1
+    private var value = 0
     private var job: Job? = null
-
-    init { }
+    private var fetched = false
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
-        Log.i("TAG", "onCreate: ")
+        if (::lifecycleRegistry.isInitialized) {
+            lifecycleRegistry.coroutineScope.launchWhenCreated {
+                Log.i("TAG", ": value==== $value -----------  position ============= $position  ")
+                delay(1200)
+                Log.i("TAG", ": value==== $value -----------  position +++++++++++++ $position  ")
+                position += 1
+                _timerValue.postValue(position.toString())
+            }
+        }
+        Log.i("TAG", "onCreate:  position ====$position ")
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onStart() {
-        Log.i("TAG", "onCreate: ")
-       lifecycle.coroutineScope.launchWhenStarted {
-            delay(10000)
-            Log.i("TAG", ": $value")
-            _timerValue.postValue(value.toString())
-        }
+        Log.i("TAG", "ON_START:position ====     $position ")
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
-        Log.i("TAG", "ON_DESTROY: ")
+        Log.i("TAG", "ON_DESTROY: position ====     $position ")
         job?.cancel()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onStop() {
-        Log.i("TAG", "ON_STOP: ")
+        Log.i("TAG", "ON_STOP:position ====        $position ")
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPause() {
-        Log.i("TAG", "ON_PAUSE: ")
+        Log.i("TAG", "ON_PAUSE:position ====        $position ")
 
     }
 
     fun doCancel(position: Int) {
-        Log.i("TAG", "doCancel:$position ")
+        Log.i("TAG", "doCancel:position ====  $position ")
         job?.cancel()
-    }
-
-    override fun getLifecycle(): Lifecycle {
-        return lifecycleRegistry
     }
 }

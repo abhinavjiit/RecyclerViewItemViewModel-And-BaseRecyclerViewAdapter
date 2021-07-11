@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.*
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pristencare.BR
 import com.example.pristencare.ItemViewModel
@@ -34,6 +35,40 @@ class RecyclerViewImageAdapter(val lifecycle: LifecycleOwner) :
                     }
                 }
 
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+            fun onStop() {
+                recyclerView?.let { parent ->
+                    val childCount = parent.childCount
+                    for (i in 0 until childCount) {
+                        parent.getChildAt(i)?.let {
+                            (parent.getChildViewHolder(it) as MyViewHolder)
+                                .run {
+                                    onStop()
+                                }
+                        }
+                    }
+                }
+            }
+
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_START)
+            fun onStart() {
+                recyclerView?.run {
+                    if (layoutManager is LinearLayoutManager) {
+                        val first =
+                            (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                        val last =
+                            (layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                        if (first in 0..last)
+                            for (i in first..last) {
+                                findViewHolderForAdapterPosition(i)?.let {
+                                    (it as MyViewHolder).onStart()
+                                }
+                            }
+                    }
+                }
             }
         })
 
@@ -78,11 +113,12 @@ class RecyclerViewImageAdapter(val lifecycle: LifecycleOwner) :
         init {
             binding.lifecycleOwner = this
             lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
-            lifecycleRegistry.currentState = Lifecycle.State.CREATED
+            lifecycleRegistry.currentState = Lifecycle.State.CREATED      /// ON_CREATE EVENTS
         }
 
         fun bind(position: Int) {
             itemViewModel[position].lifecycleRegistry = lifecycleRegistry
+            itemViewModel[position].position = position
             lifecycleRegistry.addObserver(itemViewModel[position])
             binding.setVariable(BR.item, itemList[position])
             binding.setVariable(BR.itemViewModel, itemViewModel[position])
@@ -95,19 +131,20 @@ class RecyclerViewImageAdapter(val lifecycle: LifecycleOwner) :
 
 
         fun onStart() {
-            binding.invalidateAll()
-            lifecycleRegistry.currentState = Lifecycle.State.STARTED
-            lifecycleRegistry.currentState = Lifecycle.State.RESUMED
+            //   binding.invalidateAll()
+            lifecycleRegistry.currentState = Lifecycle.State.STARTED     //
+            lifecycleRegistry.currentState = Lifecycle.State.RESUMED     //   ON_RESUME EVENT
         }
 
         fun onStop() {
-            lifecycleRegistry.currentState = Lifecycle.State.STARTED
-            lifecycleRegistry.currentState = Lifecycle.State.CREATED
+            lifecycleRegistry.currentState = Lifecycle.State.STARTED    //
+            lifecycleRegistry.currentState = Lifecycle.State.CREATED    //     ON_STOP EVENT
+
         }
 
         fun onDestroy() {
-            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-            binding.unbind()
+            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED   ///  ON_DESTROY EVENT
+            // binding.unbind()
             itemViewModel[absoluteAdapterPosition].doCancel(absoluteAdapterPosition)
         }
 
@@ -122,7 +159,7 @@ class RecyclerViewImageAdapter(val lifecycle: LifecycleOwner) :
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
         (holder as MyViewHolder).apply {
-            binding.unbind()
+            //  binding.unbind()
             onStop()
         }
     }
