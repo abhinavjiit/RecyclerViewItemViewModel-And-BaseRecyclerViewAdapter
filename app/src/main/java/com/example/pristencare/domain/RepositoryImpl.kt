@@ -1,15 +1,16 @@
 package com.example.pristencare.domain
 
+import com.example.pristencare.apiservice.ApiService
+import com.example.pristencare.model.PhotoDetail
 import com.example.pristencare.model.RequestModel
 import com.example.pristencare.model.ResponseModel
-import com.example.pristencare.apiservice.ApiService
 import com.example.pristencare.utils.IResult
 import com.example.pristencare.utils.performNetworkCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 
 @ExperimentalCoroutinesApi
-class RepositoryImpl (private val apiService: ApiService) :
+class RepositoryImpl(private val apiService: ApiService) :
     Repository {
     override suspend fun getImages(requestModel: RequestModel): Flow<IResult<ResponseModel>> {
         return performNetworkCall {
@@ -24,5 +25,9 @@ class RepositoryImpl (private val apiService: ApiService) :
                 page = requestModel.page
             )
         }
+    }
+
+    override suspend fun getPhotoDetail(number: Int): Flow<IResult<PhotoDetail>> {
+        return performNetworkCall { apiService.getPhotoDetail(number) }
     }
 }

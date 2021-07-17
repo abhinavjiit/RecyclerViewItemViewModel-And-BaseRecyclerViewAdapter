@@ -14,15 +14,15 @@ sealed class FeedItem(private val layoutId: Int) :
 
 }
 
-@ExperimentalCoroutinesApi
-class ImageItem(private val photo: Photo) : FeedItem(
-    R.layout.image_item
-) {
-    override fun getBindingPairs(): List<Pair<Int, Any>> {
-        return listOf(BR.item to photo)
-    }
-
-}
+//@ExperimentalCoroutinesApi
+//class ImageItem(private val photo: Photo) : FeedItem(
+//    R.layout.image_item
+//) {
+//    override fun getBindingPairs(): List<Pair<Int, Any>> {
+//        return
+//    }
+//
+//}
 
 @ExperimentalCoroutinesApi
 class DefaultItem() : FeedItem(R.layout.default_item_shimmer_layout) {

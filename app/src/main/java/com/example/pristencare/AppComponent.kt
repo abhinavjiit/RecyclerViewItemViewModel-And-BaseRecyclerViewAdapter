@@ -11,4 +11,5 @@ interface AppComponent {
 
     @ExperimentalCoroutinesApi
     fun inject(activity: MainActivity)
+
 }

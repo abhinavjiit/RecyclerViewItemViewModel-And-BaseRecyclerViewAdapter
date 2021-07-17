@@ -7,10 +7,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pristencare.BaseApplication
-import com.example.pristencare.EndlessScrollListener
-import com.example.pristencare.Injector
-import com.example.pristencare.ItemViewModel
+import com.example.pristencare.*
 import com.example.pristencare.adapter.RecyclerViewImageAdapter
 import com.example.pristencare.apiservice.ApiService
 import com.example.pristencare.databinding.ActivityMainBinding
@@ -51,7 +48,12 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
     private val Imageadapter by lazy { RecyclerViewImageAdapter(this) }
 
     @Inject
+    @MainRetrofit
     lateinit var retrofit: ApiService
+
+    @Inject
+    @ItemViewModelRetrofit
+    lateinit var itemViewModelRetrofit: ApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (BaseApplication.getInstance() as Injector).createAppComponent().inject(this)
@@ -80,10 +82,9 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
                             val list = arrayListOf<Photo>()
                             val itemViewModelList = arrayListOf<ItemViewModel>()
                             it.photo.forEach {
-                                list.add(it)
-                                itemViewModelList.add(ItemViewModel())
+                                itemViewModelList.add(ItemViewModel(it, itemViewModelRetrofit))
                             }
-                            Imageadapter.setListData(list, itemViewModelList)
+                            Imageadapter.setListData(itemViewModelList)
 
 
                         }
